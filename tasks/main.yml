@@ -36,7 +36,7 @@
   # when: not __apr_installed
   register: __openssl_configure
   command: >
-    ./configure
+    ./Configure
     chdir={{ openssl_tmp_storage }}/{{ openssl_name}}
 
 - name: Debug Output of Configure OpenSSL
