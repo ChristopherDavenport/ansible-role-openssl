@@ -69,11 +69,4 @@
   debug: var=__apr_make_install.stdout_lines
   when:
     - openssl_debug
-    - not __apr_installed
-
-- name: Download APR Utils
-  when: not __apr_installed
-  get_url:
-    dest: "{{ apr_tmp_storage }}"
-    url: http://mirror.nexcess.net/apache//apr/{{ apr_util_tar_archive }}
-    checksum: "{{ apr_util_version_specific[apr_util_version].checksum }}"
+    # - not __apr_installed
