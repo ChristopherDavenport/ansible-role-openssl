@@ -57,7 +57,20 @@
     - apr_debug
     # - not __apr_installed
 
-- name: Make Install APR
+- name: Make Test OpenSSL
+  # when: not __apr_installed
+  register: __openssl_make_test
+  make:
+    chdir: "{{ openssl_tmp_storage }}/{{ openssl_name }}"
+    target: test
+
+- name: Debug Output of Make Install APR
+  debug: var=__openssl_make_test.stdout_lines
+  when:
+    - openssl_debug
+    # - not __apr_installed
+
+- name: Make Install OpenSSL
   # when: not __apr_installed
   register: __openssl_make_install
   make:
@@ -65,8 +78,8 @@
     target: install
   become: yes
 
-- name: Debug Output of Make Install APR
-  debug: var=__apr_make_install.stdout_lines
+- name: Debug Output of Make Install OpenSSL
+  debug: var=__openssl_make_install.stdout_lines
   when:
     - openssl_debug
     # - not __apr_installed
