@@ -26,7 +26,7 @@
   set_fact:
     __openssl_installed: "{% if __openssl_version|failed or __openssl_version.stdout != openssl_version %}true{% else %}false{% endif %}"
 
--name: Debug OpenSSL Set Installed
+- name: Debug OpenSSL Set Installed
   debug: var=__openssl_installed
   when: openssl_debug
 
