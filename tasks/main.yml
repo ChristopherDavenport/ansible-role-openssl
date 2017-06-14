@@ -11,21 +11,32 @@
     - make
     - perl
 
+- name: Check OpenSSL Install State
+  register: __openssl_version
+  ignore_errors: true
+  changed_when: false
+  shell: >
+    openssl version
+
+- name: Set Installed
+  set_fact:
+    __openssl_installed: "{% if __openssl_version.stdout == openssl_version %}true{% else %}false{% endif %}"
+
 - name: Create Temporary Storage Location
-  # when: not __apr_installed
+  when: not __openssl_installed
   file:
     state: directory
     path: "{{ openssl_tmp_storage }}"
 
 - name: Download OpenSSL
-  # when: not __apr_installed
+  when: not __openssl_installed
   get_url:
     dest: "{{ openssl_tmp_storage }}"
     url: "{{ openssl_download_location }}"
     checksum: "{{ openssl_version_specific[openssl_version].checksum }}"
 
 - name: Unpack OpenSSL
-  # when: not __apr_installed
+  when: not __openssl_installed
   unarchive:
     remote_src: yes
     src: "{{ openssl_tmp_storage }}/{{ openssl_tar_archive }}"
@@ -33,7 +44,7 @@
     keep_newer: yes
 
 - name: Configure OpenSSL
-  # when: not __apr_installed
+  when: not __openssl_installed
   register: __openssl_configure
   command: >
     ./config
@@ -43,10 +54,10 @@
   debug: var=__openssl_configure.stdout_lines
   when:
     - openssl_debug
-    # - not __apr_installed
+    - not __openssl_installed
 
 - name: Make OpenSSL
-  # when: not __apr_installed
+  when: not __openssl_installed
   register: __openssl_make
   make:
     chdir: "{{ openssl_tmp_storage }}/{{ openssl_name }}"
@@ -55,10 +66,10 @@
   debug: var=__openssl_make.stdout_lines
   when:
     - openssl_debug
-    # - not __apr_installed
+    - not __openssl_installed
 
 - name: Make Test OpenSSL
-  # when: not __apr_installed
+  when: not __openssl_installed
   register: __openssl_make_test
   ignore_errors: true
   make:
@@ -69,10 +80,10 @@
   debug: var=__openssl_make_test.stdout_lines
   when:
     - openssl_debug
-    # - not __apr_installed
+    - not __openssl_installed
 
 - name: Make Install OpenSSL
-  # when: not __apr_installed
+  when: not __openssl_installed
   register: __openssl_make_install
   make:
     chdir: "{{ openssl_tmp_storage }}/{{ openssl_name }}"
@@ -83,4 +94,4 @@
   debug: var=__openssl_make_install.stdout_lines
   when:
     - openssl_debug
-    # - not __apr_installed
+    - not __openssl_installed
