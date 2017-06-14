@@ -77,7 +77,9 @@
     - not __openssl_installed
 
 - name: Make Test OpenSSL
-  when: not __openssl_installed
+  when:
+    - openssl_debug
+    - not __openssl_installed
   register: __openssl_make_test
   ignore_errors: true
   make:
