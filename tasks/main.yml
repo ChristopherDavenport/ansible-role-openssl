@@ -47,7 +47,7 @@
   when: not __openssl_installed
   register: __openssl_configure
   command: >
-    ./config
+    ./config -Wl,--enable-new-dtags,-rpath,'$(LIBRPATH)'
     chdir={{ openssl_tmp_storage }}/{{ openssl_name}}
 
 - name: Debug Output of Configure OpenSSL
