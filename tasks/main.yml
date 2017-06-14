@@ -60,6 +60,7 @@
 - name: Make Test OpenSSL
   # when: not __apr_installed
   register: __openssl_make_test
+  ignore_errors: true
   make:
     chdir: "{{ openssl_tmp_storage }}/{{ openssl_name }}"
     target: test
