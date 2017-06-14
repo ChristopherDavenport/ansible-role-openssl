@@ -18,9 +18,17 @@
   shell: >
     openssl version
 
+- name: Debug OpenSSL Version Check
+  debug: var=__openssl_version
+  when: openssl_debug
+
 - name: Set Installed
   set_fact:
     __openssl_installed: "{% if __openssl_version|failed or __openssl_version.stdout != openssl_version %}true{% else %}false{% endif %}"
+
+-name: Debug OpenSSL Set Installed
+  debug: var=__openssl_installed
+  when: openssl_debug
 
 - name: Create Temporary Storage Location
   when: not __openssl_installed
