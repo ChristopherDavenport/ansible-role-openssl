@@ -18,7 +18,7 @@
     path: "{{ openssl_tmp_storage }}"
 
 - name: Download OpenSSL
-  when: not __apr_installed
+  # when: not __apr_installed
   get_url:
     dest: "{{ openssl_tmp_storage }}"
     url: "{{ openssl_download_location }}"
@@ -42,19 +42,19 @@
 - name: Debug Output of Configure OpenSSL
   debug: var=__openssl_configure.stdout_lines
   when:
-    - apr_debug
+    - openssl_debug
     # - not __apr_installed
 
 - name: Make OpenSSL
   # when: not __apr_installed
-  register: __apr_make
+  register: __openssl_make
   make:
     chdir: "{{ openssl_tmp_storage }}/{{ openssl_name }}"
 
 - name: Debug Output of Make OpenSSL
   debug: var=__openssl_make.stdout_lines
   when:
-    - apr_debug
+    - openssl_debug
     # - not __apr_installed
 
 - name: Make Test OpenSSL
@@ -64,7 +64,7 @@
     chdir: "{{ openssl_tmp_storage }}/{{ openssl_name }}"
     target: test
 
-- name: Debug Output of Make Install APR
+- name: Debug Output of Make Install OpenSSL
   debug: var=__openssl_make_test.stdout_lines
   when:
     - openssl_debug
