@@ -20,7 +20,7 @@
 
 - name: Set Installed
   set_fact:
-    __openssl_installed: "{% if __openssl_version.stdout == openssl_version %}true{% else %}false{% endif %}"
+    __openssl_installed: "{% if __openssl_version|failed or __openssl_version.stdout != openssl_version %}true{% else %}false{% endif %}"
 
 - name: Create Temporary Storage Location
   when: not __openssl_installed
