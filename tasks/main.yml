@@ -1,0 +1,79 @@
+---
+
+- name: Insure Required Packages Are Installed
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - tar
+    - wget
+    - gcc
+    - make
+    - perl
+
+- name: Create Temporary Storage Location
+  # when: not __apr_installed
+  file:
+    state: directory
+    path: "{{ openssl_tmp_storage }}"
+
+- name: Download OpenSSL
+  when: not __apr_installed
+  get_url:
+    dest: "{{ openssl_tmp_storage }}"
+    url: "{{ openssl_download_location }}"
+    checksum: "{{ openssl_version_specific[openssl_version].checksum }}"
+
+- name: Unpack OpenSSL
+  # when: not __apr_installed
+  unarchive:
+    remote_src: yes
+    src: "{{ openssl_tmp_storage }}/{{ openssl_tar_archive }}"
+    dest: "{{ openssl_tmp_storage }}"
+    keep_newer: yes
+
+- name: Configure OpenSSL
+  # when: not __apr_installed
+  register: __openssl_configure
+  command: >
+    ./configure
+    chdir={{ openssl_tmp_storage }}/{{ openssl_name}}
+
+- name: Debug Output of Configure OpenSSL
+  debug: var=__openssl_configure.stdout_lines
+  when:
+    - apr_debug
+    # - not __apr_installed
+
+- name: Make OpenSSL
+  # when: not __apr_installed
+  register: __apr_make
+  make:
+    chdir: "{{ openssl_tmp_storage }}/{{ openssl_name }}"
+
+- name: Debug Output of Make OpenSSL
+  debug: var=__openssl_make.stdout_lines
+  when:
+    - apr_debug
+    # - not __apr_installed
+
+- name: Make Install APR
+  # when: not __apr_installed
+  register: __openssl_make_install
+  make:
+    chdir: "{{ openssl_tmp_storage }}/{{ openssl_name }}"
+    target: install
+  become: yes
+
+- name: Debug Output of Make Install APR
+  debug: var=__apr_make_install.stdout_lines
+  when:
+    - openssl_debug
+    - not __apr_installed
+
+- name: Download APR Utils
+  when: not __apr_installed
+  get_url:
+    dest: "{{ apr_tmp_storage }}"
+    url: http://mirror.nexcess.net/apache//apr/{{ apr_util_tar_archive }}
+    checksum: "{{ apr_util_version_specific[apr_util_version].checksum }}"
