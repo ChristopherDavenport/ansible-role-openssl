@@ -7,7 +7,7 @@ openssl_download_location: https://www.openssl.org/source/{{ openssl_tar_archive
 
 openssl_tmp_storage: /tmp/{{ openssl_name }}
 
-openssl_install_location: /usr/local/ssl
+openssl_install_location: /opt/openssl
 openssl_rlib_location: "{{ openssl_install_location }}/lib"
 
 
