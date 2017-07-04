@@ -16,7 +16,7 @@
   ignore_errors: true
   changed_when: false
   shell: >
-    openssl version
+    {{ openssl_install_location }}/bin/openssl version
 
 - name: Debug OpenSSL Version Check
   debug: var=__openssl_version
@@ -54,7 +54,7 @@
 - name: Configure OpenSSL
   when: not __openssl_installed
   register: __openssl_configure
-  command: ./config -Wl,--enable-new-dtags,-rpath=/usr/lib --prefix=/usr/ --openssldir=/usr/
+  command: ./config -Wl,--enable-new-dtags,-rpath={{ openssl_rlib_location }} --prefix={{ openssl_install_location }} --openssldir={{ openssl_install_location }}
   args:
     chdir: "{{ openssl_tmp_storage }}/{{ openssl_name}}"
 
